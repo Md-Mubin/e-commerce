@@ -93,38 +93,62 @@ const login = async (req, res) => {
 // ==================== emailVarify 
 const emailVarify = async (req, res) => {
 
-    const { email, OTP } = req.body
+    try {
+        const { email, OTP } = req.body
 
-    if (!email || !OTP) return res.status(400).send({ err: "Invalid Request" })
+        if (!email || !OTP) return res.status(400).send({ err: "Invalid Request" })
 
-    const verified_ID = await userSchema.findOne({ email, OTP, OTP_expireTime: { $gt: Date.now() } })
+        const verified_ID = await userSchema.findOne({ email, OTP, OTP_expireTime: { $gt: Date.now() } })
 
-    // if using wrong otp more than 5 times
-    if (!verified_ID) {
-        const falied_attempt = await userSchema.findOneAndUpdate({ email }, { $inc: { OTP_failedAttempt: 1 } }, { new: true })
-        if (falied_attempt.OTP_failedAttempt === 5) {
+        // if using wrong otp more than 5 times
+        if (!verified_ID) {
+            const falied_attempt = await userSchema.findOneAndUpdate({ email }, { $inc: { OTP_failedAttempt: 1 } }, { new: true })
+            if (falied_attempt.OTP_failedAttempt === 5) {
 
-            falied_attempt.OTP = undefined
-            falied_attempt.OTP_expireTime = undefined
-            falied_attempt.OTP_failedAttempt = undefined
-            falied_attempt.isVerified = false
-            falied_attempt.save()
-            return res.status(400).send({ err: "No attempt left! Try Again Letter" })
+                falied_attempt.OTP = undefined
+                falied_attempt.OTP_expireTime = undefined
+                falied_attempt.OTP_failedAttempt = undefined
+                falied_attempt.isVerified = false
+                falied_attempt.save()
+                return res.status(400).send({ err: "No attempt left! Try Again Letter" })
+            }
+            return res.status(400).send({ err: "Invalid OTP" })
         }
-        return res.status(400).send({ err: "Invalid OTP" })
-    }
 
-    // after successfuly giving otp
-    verified_ID.OTP = undefined,
-        verified_ID.OTP_expireTime = undefined,
-        verified_ID.OTP_failedAttempt = undefined,
-        verified_ID.isPassValid = true
-    verified_ID.save()
-    res.status(200).send({ msg: "Email Verified Successfull" })
+        // after successfuly giving otp
+        verified_ID.OTP = undefined,
+            verified_ID.OTP_expireTime = undefined,
+            verified_ID.OTP_failedAttempt = undefined,
+            verified_ID.isPassValid = true
+        verified_ID.save()
+        res.status(200).send({ msg: "Email Verified Successfull" })
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
 }
 
 // ==================== resetPass
 const resetPass = async (req, res) => {
+
+    try {
+        const { newPass } = req.body
+        if (!newPass) return res.status(400).send({ err: "New Password Required" })
+    
+        const randomString = req.params.randomString
+        const email = req.query.email
+    
+        // checking if the user exists
+        const existUser = await userSchema.findOne({ email, resetPassID: randomString, resetPassID_expireAt: { $gt: Date.now() } })
+        if (!existUser) return res.status(400).send({ err: "Invalid Request" })
+    
+        existUser.pass = newPass
+        existUser.resetPassID = undefined
+        existUser.resetPassID_expireAt = undefined
+        existUser.save()
+        res.status(200).send({ msg: "Password Reset Successfull" })
+    } catch (error) {
+         res.status(500).send({ err: "Server Error" })
+    }
 
 }
 
