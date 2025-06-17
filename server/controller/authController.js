@@ -101,8 +101,26 @@ const emailVarify = async (req, res) => {
 
     // if using wrong otp more than 5 times
     if (!verified_ID) {
-        const falied_attempt = await userSchema.findOneAndUpdate({ email }, { $inc: { otpFailedAttempt: 1 } }, { new: true })
-}
+        const falied_attempt = await userSchema.findOneAndUpdate({ email }, { $inc: { OTP_failedAttempt: 1 } }, { new: true })
+        if (falied_attempt.OTP_failedAttempt === 5) {
+
+            falied_attempt.OTP = undefined
+            falied_attempt.OTP_expireTime = undefined
+            falied_attempt.OTP_failedAttempt = undefined
+            falied_attempt.isVerified = false
+            falied_attempt.save()
+            return res.status(400).send({ err: "No attempt left! Try Again Letter" })
+        }
+        return res.status(400).send({ err: "Invalid OTP" })
+    }
+
+    // after successfuly giving otp
+    verified_ID.OTP = undefined,
+        verified_ID.OTP_expireTime = undefined,
+        verified_ID.OTP_failedAttempt = undefined,
+        verified_ID.isPassValid = true
+    verified_ID.save()
+    res.status(200).send({ msg: "Email Verified Successfull" })
 }
 
 // ==================== resetPass
