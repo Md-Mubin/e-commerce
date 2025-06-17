@@ -1,0 +1,113 @@
+const userSchema = require("../models/userSchema")
+const { emailValid, passValid } = require("../helpers/emailPassValid")
+const { mailOTP } = require("../helpers/otpWorks")
+const { emailVarifiedTemplet } = require("../helpers/templetes")
+const jwt = require("jsonwebtoken")
+
+// ==================== register 
+const register = async (req, res) => {
+
+    try {
+        const { name, email, pass, phone } = req.body
+
+        if (!name) return res.status(400).send({ err: "Name Required" })
+        if (!email) return res.status(400).send({ err: "Email Required" })
+        if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
+
+        // checking if user with email already exists
+        const existUser = await userSchema.findOne(email)
+        if (existUser) return res.status(400).send({ err: "User Already Exists" })
+
+        if (!pass) return res.status(400).send({ err: "Password Required" })
+        if (passValid(pass)) return res.status(400).send(pass)
+
+        if (!phone) return res.status(400).send({ err: "Phone Number Required" })
+
+        // generate random OTP
+        const random_OTP = Math.floor(1000 + Math.random() * 9000)
+
+        // save new user 
+        const newUser = new userSchema({
+            name,
+            email,
+            pass,
+            OTP: random_OTP,
+            OTP_expireTime: new Date(Date.now() + 5 * 60 * 1000)
+        })
+
+        newUser.save()
+
+        mailOTP(name, email, "Verify with OTP", emailVarifiedTemplet, random_OTP)
+
+        res.status(200).send({ msg: "Registration Successfull!" })
+    } catch (error) {
+        res.status(500).send({ err: "Server Problem" })
+    }
+}
+
+// ==================== login
+const login = async (req, res) => {
+
+    try {
+        const { email, pass } = req.body
+
+        if (!email) return res.status(400).send({ err: "Email Required" })
+        if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
+
+        // checking if user with email already exists
+        const existUser = await userSchema.findOne(email)
+        if (!existUser) return res.status(400).send({ err: "Something went wrong" })
+
+        if (!pass) return res.status(400).send({ err: "Password Required" })
+        if (passValid(pass)) return res.status(400).send(pass)
+
+        // to check password
+        const passCheck = await existUser.isPassValid(pass)
+        if (!passCheck) return res.status(400).send({ err: "Something Went Wrong" })
+
+        if (!existUser.isVerified) return res.status(400).send({ err: "Something Went Wrong" })
+
+        // create data set to make changes 
+        const loggedUser = existUser.toObject()
+
+        delete loggedUser.pass
+        delete loggedUser.OTP
+        delete loggedUser.OTP_expireTime
+
+        // create access token
+        const access_token = jwt.sign({
+            data: {
+                email: existUser.email,
+                id: existUser._id
+            }
+        }, process.env.SECRET_ACC_TOKEN, { expiresIn: "24h" })
+
+        if (!access_token) return res.status(400).send({ err: "Something Went Wrong" })
+
+        res.status(400).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}` }, loggedUser, access_token)
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
+}
+
+// ==================== emailVarify 
+const emailVarify = async (req, res) => {
+
+}
+
+// ==================== resetPass
+const resetPass = async (req, res) => {
+
+}
+
+// ==================== forgetPass
+const forgetPass = async (req, res) => {
+
+}
+
+// ==================== update
+const update = async (req, res) => {
+
+}
+
+module.exports = { register, login, emailVarify, resetPass, forgetPass, update }
