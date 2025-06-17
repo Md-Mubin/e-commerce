@@ -93,6 +93,16 @@ const login = async (req, res) => {
 // ==================== emailVarify 
 const emailVarify = async (req, res) => {
 
+    const { email, OTP } = req.body
+
+    if (!email || !OTP) return res.status(400).send({ err: "Invalid Request" })
+
+    const verified_ID = await userSchema.findOne({ email, OTP, OTP_expireTime: { $gt: Date.now() } })
+
+    // if using wrong otp more than 5 times
+    if (!verified_ID) {
+        const falied_attempt = await userSchema.findOneAndUpdate({ email }, { $inc: { otpFailedAttempt: 1 } }, { new: true })
+}
 }
 
 // ==================== resetPass
