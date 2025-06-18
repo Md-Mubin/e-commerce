@@ -3,6 +3,7 @@ const { emailValid, passValid } = require("../helpers/emailPassValid")
 const { mailOTP } = require("../helpers/otpWorks")
 const { emailVarifiedTemplet } = require("../helpers/templetes")
 const jwt = require("jsonwebtoken")
+const generatedRandomString = require("../helpers/generatedRandomString")
 
 // ==================== register 
 const register = async (req, res) => {
@@ -133,28 +134,42 @@ const resetPass = async (req, res) => {
     try {
         const { newPass } = req.body
         if (!newPass) return res.status(400).send({ err: "New Password Required" })
-    
+
         const randomString = req.params.randomString
         const email = req.query.email
-    
+
         // checking if the user exists
         const existUser = await userSchema.findOne({ email, resetPassID: randomString, resetPassID_expireAt: { $gt: Date.now() } })
         if (!existUser) return res.status(400).send({ err: "Invalid Request" })
-    
+
         existUser.pass = newPass
         existUser.resetPassID = undefined
         existUser.resetPassID_expireAt = undefined
         existUser.save()
         res.status(200).send({ msg: "Password Reset Successfull" })
     } catch (error) {
-         res.status(500).send({ err: "Server Error" })
+        res.status(500).send({ err: "Server Error" })
     }
-
 }
 
 // ==================== forgetPass
 const forgetPass = async (req, res) => {
 
+    const { email } = req.body
+    if (!email) return res.status(400).send({ err: "Email Required" })
+
+    // check if user exists
+    const existUser = await userSchema.findOne({ email })
+    if (!existUser) return res.status(400).send({ err: "User is not exists" })
+
+    // create new string for reset pass link
+    const createdString = generatedRandomString(30)
+
+    existUser.resetPassID = createdString
+    existUser.resetPassID_expireAt = new Date(Date.now() + 5 * 60 * 1000)
+    existUser.save()
+
+    // passing data to resetPassOtp function
 }
 
 // ==================== update
