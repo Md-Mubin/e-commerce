@@ -4,7 +4,7 @@ const { mailOTP, resetPassOTP } = require("../helpers/otpWorks")
 const { emailVarifiedTemplet, resetPassTamplet } = require("../helpers/templetes")
 const jwt = require("jsonwebtoken")
 const generatedRandomString = require("../helpers/generatedRandomString")
-const cloudinary = require("cloudinary")
+const cloudinary = require("../helpers/cloudinary")
 const fs = require("fs")
 
 // ==================== register 
@@ -198,7 +198,7 @@ const update = async (req, res) => {
         if (req?.file?.path) {
             if (existUser.avatar) await cloudinary.uploader.destroy(existUser.avatar.split("/").pop().split("."), [0])
             const result = await cloudinary.uploader.upload(req.file.path)
-            existUser.avatar = res.resul
+            existUser.avatar = result.resul
             fs.unlinkSync(req.file.path)
         }
 
