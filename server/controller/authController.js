@@ -1,9 +1,11 @@
 const userSchema = require("../models/userSchema")
 const { emailValid, passValid } = require("../helpers/emailPassValid")
-const { mailOTP } = require("../helpers/otpWorks")
-const { emailVarifiedTemplet } = require("../helpers/templetes")
+const { mailOTP, resetPassOTP } = require("../helpers/otpWorks")
+const { emailVarifiedTemplet, resetPassTamplet } = require("../helpers/templetes")
 const jwt = require("jsonwebtoken")
 const generatedRandomString = require("../helpers/generatedRandomString")
+const cloudinary = require("cloudinary")
+const fs = require("fs")
 
 // ==================== register 
 const register = async (req, res) => {
@@ -128,6 +130,32 @@ const emailVarify = async (req, res) => {
     }
 }
 
+// ==================== forgetPass
+const forgetPass = async (req, res) => {
+
+    try {
+        const { email } = req.body
+        if (!email) return res.status(400).send({ err: "Email Required" })
+
+        // check if user exists
+        const existUser = await userSchema.findOne({ email })
+        if (!existUser) return res.status(400).send({ err: "User is not exists" })
+
+        // create new string for reset pass link
+        const createdString = generatedRandomString(30)
+
+        existUser.resetPassID = createdString
+        existUser.resetPassID_expireAt = new Date(Date.now() + 5 * 60 * 1000)
+        existUser.save()
+
+        // passing data to resetPassOtp function
+        resetPassOTP(existUser.name, email, "Reset Password", resetPassTamplet, createdString)
+        res.status(200).send({ msg: "Check Your Email!" })
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
+}
+
 // ==================== resetPass
 const resetPass = async (req, res) => {
 
@@ -152,29 +180,33 @@ const resetPass = async (req, res) => {
     }
 }
 
-// ==================== forgetPass
-const forgetPass = async (req, res) => {
-
-    const { email } = req.body
-    if (!email) return res.status(400).send({ err: "Email Required" })
-
-    // check if user exists
-    const existUser = await userSchema.findOne({ email })
-    if (!existUser) return res.status(400).send({ err: "User is not exists" })
-
-    // create new string for reset pass link
-    const createdString = generatedRandomString(30)
-
-    existUser.resetPassID = createdString
-    existUser.resetPassID_expireAt = new Date(Date.now() + 5 * 60 * 1000)
-    existUser.save()
-
-    // passing data to resetPassOtp function
-}
-
 // ==================== update
 const update = async (req, res) => {
+    try {
+        const { name, pass } = req.body
 
+        // check if the user exists
+        const existUser = await userSchema.findById(req.user._id)
+        if (!existUser) return res.status(400).send({ err: "Something Went Wrong" })
+
+        if (!name) return res.status(400).send({ err: "Name Required" })
+        if (!pass) return res.status(400).send({ err: "Password Required" })
+
+        existUser.name = name
+        existUser.pass = pass
+
+        if (req?.file?.path) {
+            if (existUser.avatar) await cloudinary.uploader.destroy(existUser.avatar.split("/").pop().split("."), [0])
+            const result = await cloudinary.uploader.upload(req.file.path)
+            existUser.avatar = res.resul
+            fs.unlinkSync(req.file.path)
+        }
+
+        existUser.save()
+        res.status(200).send(existUser)
+    } catch (error) {
+        res.status(500).send("Server Error")
+    }
 }
 
 module.exports = { register, login, emailVarify, resetPass, forgetPass, update }
