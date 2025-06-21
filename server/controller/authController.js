@@ -34,6 +34,7 @@ const register = async (req, res) => {
             name,
             email,
             pass,
+            phone,
             OTP: random_OTP,
             OTP_expireTime: new Date(Date.now() + 5 * 60 * 1000)
         })
