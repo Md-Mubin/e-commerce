@@ -18,7 +18,7 @@ const register = async (req, res) => {
         if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
 
         // checking if user with email already exists
-        const existUser = await userSchema.findOne(email)
+        const existUser = await userSchema.findOne({ email })
         if (existUser) return res.status(400).send({ err: "User Already Exists" })
 
         if (!pass) return res.status(400).send({ err: "Password Required" })
@@ -58,7 +58,7 @@ const login = async (req, res) => {
         if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
 
         // checking if user with email already exists
-        const existUser = await userSchema.findOne(email)
+        const existUser = await userSchema.findOne({ email })
         if (!existUser) return res.status(400).send({ err: "Something went wrong" })
 
         if (!pass) return res.status(400).send({ err: "Password Required" })
