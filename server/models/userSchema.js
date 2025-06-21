@@ -24,6 +24,17 @@ const userSchema = new SCHEMA({
         required: true
     },
 
+    adress: {
+        type: String,
+        default: ""
+    },
+
+    role: {
+        type: String,
+        default: "users",
+        enum: ["users", "admin", "stuffs"]
+    },
+
     avatar: {
         type: String,
         default: ""
