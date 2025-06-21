@@ -2,11 +2,11 @@ const mongoose = require("mongoose")
 const SCHEMA = mongoose.Schema
 
 const cetegorySchema = new SCHEMA({
-    categoryName: {
+    cetegoryName: {
         type: String,
         required: true
     },
-    categoryImage : {
+    cetegoryImage : {
         type : String,
         required : true
     }
