@@ -82,7 +82,8 @@ const login = async (req, res) => {
         const access_token = jwt.sign({
             data: {
                 email: existUser.email,
-                id: existUser._id
+                id: existUser._id,
+                role : existUser.role
             }
         }, process.env.SECRET_ACC_TOKEN, { expiresIn: "24h" })
 
