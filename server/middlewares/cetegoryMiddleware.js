@@ -1,4 +1,4 @@
-const cetegoryMiddleware = (roles) => {
+const chekingRoles = (roles) => {
     return (req, res, next) => {
         if (roles.includes(req.user.role)) {
             next()
@@ -8,4 +8,4 @@ const cetegoryMiddleware = (roles) => {
     }
 }
 
-module.exports = cetegoryMiddleware
+module.exports = chekingRoles
