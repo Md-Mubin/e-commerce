@@ -89,7 +89,7 @@ const login = async (req, res) => {
 
         if (!access_token) return res.status(400).send({ err: "Something Went Wrong" })
 
-        res.status(400).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}` }, loggedUser, access_token)
+        res.status(400).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}`, loggedUser, access_token})
     } catch (error) {
         res.status(500).send({ err: "Server Error" })
     }
