@@ -35,7 +35,7 @@ const productSchema = new SCHEMA({
 
     cetegory: {
         type: SCHEMA.Types.ObjectId,
-        required: true
+        ref : "categories"
     },
 
     status: {
