@@ -2,6 +2,7 @@ const cetegorySchema = require("../models/cetegorySchema")
 const cloudinary = require("../helpers/cloudinary")
 const fs = require("fs")
 
+// ==================== creating cetegory
 const createCetegory = async (req, res) => {
 
     try {
@@ -24,6 +25,7 @@ const createCetegory = async (req, res) => {
     }
 }
 
+// ==================== fetching cetegory
 const fetchCetegories = async (req, res) => {
     try {
         const allCetegories = await cetegorySchema.find()
