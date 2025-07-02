@@ -191,11 +191,8 @@ const update = async (req, res) => {
         const existUser = await userSchema.findById(req.user._id)
         if (!existUser) return res.status(400).send({ err: "Something Went Wrong" })
 
-        if (!name) return res.status(400).send({ err: "Name Required" })
-        if (!pass) return res.status(400).send({ err: "Password Required" })
-
-        existUser.name = name
-        existUser.pass = pass
+        if(name) existUser.name = name
+        if(pass) existUser.pass = pass
 
         if (req?.file?.path) {
             if (existUser.avatar) await cloudinary.uploader.destroy(existUser.avatar.split("/").pop().split(".")[0])
