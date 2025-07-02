@@ -83,13 +83,13 @@ const login = async (req, res) => {
             data: {
                 email: existUser.email,
                 id: existUser._id,
-                role : existUser.role
+                role: existUser.role
             }
         }, process.env.SECRET_ACC_TOKEN, { expiresIn: "24h" })
 
         if (!access_token) return res.status(400).send({ err: "Something Went Wrong" })
 
-        res.status(400).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}`, loggedUser, access_token})
+        res.status(400).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}`, loggedUser, access_token })
     } catch (error) {
         res.status(500).send({ err: "Server Error" })
     }
@@ -191,12 +191,12 @@ const update = async (req, res) => {
         const existUser = await userSchema.findById(req.user._id)
         if (!existUser) return res.status(400).send({ err: "Something Went Wrong" })
 
-        if(name) existUser.name = name
-        if(pass) existUser.pass = pass
+        if (name) existUser.name = name
+        if (pass) existUser.pass = pass
 
         if (req?.file?.path) {
             if (existUser.avatar) await cloudinary.uploader.destroy(existUser.avatar.split("/").pop().split(".")[0])
-            const result = await cloudinary.uploader.upload(req.file.path)
+            const result = await cloudinary.uploader.upload(req.file.path, { folder: "Avatar" })
             existUser.avatar = result.url
             fs.unlinkSync(req.file.path)
         }

@@ -14,7 +14,7 @@ const createCetegory = async (req, res) => {
         const existCetegory = await cetegorySchema.findOne({ name: { $regex: `${cetegoryName}`, $options: "i" } })
         if (existCetegory) return res.status(400).send({ err: "Cetegory is Already Exists" })
 
-        const result = await cloudinary.uploader.upload(req.file.path)
+        const result = await cloudinary.uploader.upload(req.file.path, { folder: "Cetegory" })
         fs.unlinkSync(req.file.path)
 
         const newCetegory = new cetegorySchema({
