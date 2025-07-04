@@ -15,12 +15,14 @@ const register = async (req, res) => {
 
         const errors = {}
         if (!name) errors.nameError = "Name Required"
-        if (!email) return res.status(400).send({ err: "Email Required" })
-        if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
+        if (!email) errors.emailError = "Email Required"
+        if (email && !emailValid(email)) errors.emailError = "Email is not Valid"
 
         // checking if user with email already exists
-        const existUser = await userSchema.findOne({ email })
-        if (existUser) return res.status(400).send({ err: "User Already Exists" })
+        if (email && emailValid(email)) {
+            const existUser = await userSchema.findOne({ email })
+            if (existUser) errors.emailError = "User Already Exists"
+        }
 
         if (!pass) return res.status(400).send({ err: "Password Required" })
         if (passValid(pass)) return res.status(400).send(pass)
