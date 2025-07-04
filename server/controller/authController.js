@@ -62,21 +62,28 @@ const login = async (req, res) => {
     try {
         const { email, pass } = req.body
 
-        if (!email) return res.status(400).send({ err: "Email Required" })
-        if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
+        const errors = {}
+        if (!email) errors.emailError = "Email Required"
+        if (email && !emailValid(email)) errors.emailError = "Email is not Valid"
 
         // checking if user with email already exists
-        const existUser = await userSchema.findOne({ email })
-        if (!existUser) return res.status(400).send({ err: "Something went wrong" })
+        if (email && emailValid(email)) {
+            const existUser = await userSchema.findOne({ email })
+            if (!existUser) errors.emailError = "User is not Exists"
+        }
 
-        if (!pass) return res.status(400).send({ err: "Password Required" })
-        if (passValid(pass)) return res.status(400).send(pass)
+        if(!existUser.isVerified) errors.emailError = "Something Went Wrong"
+
+        if (!pass) errors.passError = "Password Required"
+        if (pass && passValid(pass)) errors.passError = passValid(pass)
 
         // to check password
         const passCheck = await existUser.isPassValid(pass)
-        if (!passCheck) return res.status(400).send({ err: "Something Went Wrong" })
+        if (pass && !passValid(pass) && !passCheck) errors.passError = "Something Went Wrong"
 
-        if (!existUser.isVerified) return res.status(400).send({ err: "Something Went Wrong" })
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).send({ errors })
+        }
 
         // create data set to make changes 
         const loggedUser = existUser.toObject()
