@@ -24,10 +24,14 @@ const register = async (req, res) => {
             if (existUser) errors.emailError = "User Already Exists"
         }
 
-        if (!pass) return res.status(400).send({ err: "Password Required" })
-        if (passValid(pass)) return res.status(400).send(pass)
+        if (!pass) errors.passError = "Password Required"
+        if (pass && passValid(pass)) errors.passError = passValid(pass)
 
-        if (!phone) return res.status(400).send({ err: "Phone Number Required" })
+        if (!phone) errors.phoneError = "Phone Number Required"
+
+        if (Object.keys(errors).length > 0) {
+            return res.status(400).send({ errors })
+        }
 
         // generate random OTP
         const random_OTP = Math.floor(1000 + Math.random() * 9000)
