@@ -13,7 +13,8 @@ const register = async (req, res) => {
     try {
         const { name, email, pass, phone } = req.body
 
-        if (!name) return res.status(400).send({ err: "Name Required" })
+        const errors = {}
+        if (!name) errors.nameError = "Name Required"
         if (!email) return res.status(400).send({ err: "Email Required" })
         if (!emailValid(email)) return res.status(400).send({ err: "Email is not Valid" })
 
