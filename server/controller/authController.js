@@ -72,7 +72,7 @@ const login = async (req, res) => {
             if (!existUser) errors.emailError = "User is not Exists"
         }
 
-        if(!existUser.isVerified) errors.emailError = "Something Went Wrong"
+        if (!existUser.isVerified) errors.emailError = "Something Went Wrong"
 
         if (!pass) errors.passError = "Password Required"
         if (pass && passValid(pass)) errors.passError = passValid(pass)
@@ -135,10 +135,10 @@ const emailVarify = async (req, res) => {
         }
 
         // after successfuly giving otp
-        verified_ID.OTP = undefined,
-            verified_ID.OTP_expireTime = undefined,
-            verified_ID.OTP_failedAttempt = undefined,
-            verified_ID.isPassValid = true
+        verified_ID.OTP = undefined
+        verified_ID.OTP_expireTime = undefined
+        verified_ID.OTP_failedAttempt = undefined
+        verified_ID.isPassValid = true
         verified_ID.save()
         res.status(200).send({ msg: "Email Verified Successfull" })
     } catch (error) {
