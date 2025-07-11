@@ -35,14 +35,42 @@ const productSchema = new SCHEMA({
 
     cetegory: {
         type: SCHEMA.Types.ObjectId,
-        ref : "categories"
+        ref: "categories"
     },
 
     status: {
         type: String,
         default: "pending",
         enum: ["active", "pending", "reject"]
-    }
+    },
+
+    veriants: [
+        {
+            name: {
+                type: String,
+                enum: ["color", "size"]
+            },
+
+            options: [
+                {
+                    colorName: {
+                        type: String,
+                        required: true
+                    },
+
+                    allSizes: {
+                        type: String,
+                        required: true
+                    },
+
+                    additionalPrice: {
+                        type: Number,
+                        default: 0
+                    },
+                }
+            ]
+        }
+    ]
 }, { timestamps: true })
 
 module.exports = mongoose.model("products", productSchema)
