@@ -2,7 +2,7 @@ const slugGenerator = require("../../../Extra Curriculum/e-commerce/server/helpe
 const productSchema = require("../models/productSchema")
 
 // ================== create product
-const create_product = (req, res) => {
+const create_product = async (req, res) => {
 
     try {
         const { title, description, price, stock, cetegory, veriants } = req.body
@@ -15,6 +15,10 @@ const create_product = (req, res) => {
 
         // for chekcing image
         if (req?.file?.mainImg) return res.status(400).send({ err: "Product Main Image Required" })
+
+        // check if the product exists
+        const existsProduct = await productSchema.findOne({ slug: generatedSlug })
+        if (existsProduct) return res.status(400).send({ err: "Product Already Exists" })
 
         // generate slugs
         const generatedSlug = slugGenerator(title)
@@ -79,11 +83,60 @@ const create_product = (req, res) => {
     }
 }
 
+// ================== updating product
+const update_product = async (req, res) => {
 
+    try {
+        const { title, description, price, stock, veriants } = req.body
+        const { slug } = req.params
+
+        // check for product exists
+        const existProduct = await productSchema.findOne({ slug })
+        if (!existProduct) return res.status(400).send({ err: "Product is not Found" })
+
+        // update if the reqest comes
+        if (title) existProduct.title = title
+        if (description) existProduct.description = description
+        if (price) existProduct.price = price
+        if (stock) existProduct.stock = stock
+        if (veriants && veriants.length > 0) existProduct.veriants = veriants
+
+        // for update mainImage image
+        if (req?.file?.mainImg.length > 0) {
+            let productMainImg
+            for (item of req?.file?.mainImg) {
+                const result = cloudinary.uploader.upload(item?.path, {
+                    folder: "product"
+                })
+                fs.unlinkSync(item?.path)
+                productMainImg = result.url
+            }
+            existProduct.mainImg = productMainImg
+        }
+
+        // for update sub images
+        if (req?.files?.subImgs.length > 0) {
+            let productSubImages = []
+            for (item of req?.files?.subImgs) {
+                const result = cloudinary.uploader.upload(item?.path, {
+                    folder: "product"
+                })
+                fs.unlinkSync(item?.path)
+                productSubImages.push(result.url)
+            }
+            existProduct.subImgs = productMainImg
+        }
+
+        existProduct.save()
+        res.status(200).send({ msg: "Product Updated Successfully" })
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
+}
 
 // ================== fetching all product
 const fetch_allProduct = (req, res) => {
 
 }
 
-module.exports = { create_product, fetch_allProduct }
+module.exports = { create_product, update_product, fetch_allProduct }
