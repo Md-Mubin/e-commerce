@@ -10,6 +10,6 @@ productRoute.post("/create_category",authMiddleware, chekingRoles(["admin"]), up
 productRoute.get("/allCetegories",authMiddleware, chekingRoles(["users", "admin", "stuffs"]), fetchCetegories)
 
 productRoute.post("/create_product", create_product)
-productRoute.post("/allProduct", fetch_allProduct)
+productRoute.get("/allProduct", fetch_allProduct)
 
 module.exports = productRoute
