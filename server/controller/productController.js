@@ -135,8 +135,31 @@ const update_product = async (req, res) => {
 }
 
 // ================== fetching all product
-const fetch_allProduct = (req, res) => {
+const fetch_allProduct = async (req, res) => {
+    const search = req.query.search || ""
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
 
+    const totalProduct = await productSchema.countDocuments()
+    const totalPage = Math.ceil(totalProduct / limit)
+    const skip = (page - 1) * limit
+
+    const products = await productSchema.find().skip(skip).limit(limit)
+
+    const hasPrevPage = page > 1
+    const hasNextPage = page < totalPage
+
+    res.send({
+        products,
+        totalProduct,
+        limit,
+        page,
+        totalPage,
+        hasPrevPage,
+        hasNextPage,
+        prevPage: hasPrevPage ? page - 1 : null,
+        nextPage: hasNextPage ? page + 1 : null,
+    })
 }
 
 module.exports = { create_product, update_product, fetch_allProduct }
