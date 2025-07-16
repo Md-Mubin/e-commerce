@@ -124,7 +124,7 @@ const update_product = async (req, res) => {
                 fs.unlinkSync(item?.path)
                 productSubImages.push(result.url)
             }
-            existProduct.subImgs = productMainImg
+            existProduct.subImgs = productSubImages
         }
 
         existProduct.save()
