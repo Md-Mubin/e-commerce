@@ -1,4 +1,4 @@
-const slugGenerator = require("../../../Extra Curriculum/e-commerce/server/helpers/slugGenerator")
+const slugGenerator = require("../helpers/slugGenerator")
 const productSchema = require("../models/productSchema")
 
 // ================== create product
