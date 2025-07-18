@@ -15,17 +15,17 @@ const create_product = async (req, res) => {
         if (!description) return res.status(400).send({ err: "Product Description Required" })
         if (!price) return res.status(400).send({ err: "Product Price Required" })
         if (!stock) return res.status(400).send({ err: "Product Stock Required" })
-        if (veriants.length < 0) return res.status(400).send({ err: "Product Veriants Required" })
+        if (veriants.length < 1) return res.status(400).send({ err: "Product Veriants Required" })
 
         // for chekcing image
-        if (req?.file?.mainImg) return res.status(400).send({ err: "Product Main Image Required" })
+        if (!req?.files?.mainImg) return res.status(400).send({ err: "Product Main Image Required" })
+
+        // generate slugs
+        const generatedSlug = slugGenerator(title)
 
         // check if the product exists
         const existsProduct = await productSchema.findOne({ slug: generatedSlug })
         if (existsProduct) return res.status(400).send({ err: "Product Already Exists" })
-
-        // generate slugs
-        const generatedSlug = slugGenerator(title)
 
         // upload main image
         let productMainImg
@@ -141,15 +141,16 @@ const update_product = async (req, res) => {
 // ================== fetching all product
 const fetch_allProduct = async (req, res) => {
     try {
-        const search = req.query.search || ""
-        const cetegoryName = req.query.cetegory || ""
-        const page = parseInt(req.query.page) || 1
-        const limit = parseInt(req.query.limit) || 10
+        const search = req.query.search || "" // search with name
+        const cetegoryName = req.query.cetegory || "" // search with cetegory
+        const page = parseInt(req.query.page) || 1 // deafault first page
+        const limit = parseInt(req.query.limit) || 10 // how many product will show in one page
 
         const totalProduct = await productSchema.countDocuments()
-        const totalPage = Math.ceil(totalProduct / limit)
-        const skip = (page - 1) * limit
+        const totalPage = Math.ceil(totalProduct / limit) // balanacing total page will be shown
+        const skip = (page - 1) * limit // how many products will skip per page transition
 
+        // query for the searches
         const query = {}
 
         if (search) {
@@ -160,6 +161,7 @@ const fetch_allProduct = async (req, res) => {
             if (cetegoryData) query.cetegory = cetegoryData._id
         }
 
+        // filtering product search
         const products = await productSchema.find(query).skip(skip).limit(limit)
 
         const hasPrevPage = page > 1
