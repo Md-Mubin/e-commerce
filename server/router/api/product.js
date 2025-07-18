@@ -9,9 +9,9 @@ const productRoute = express.Router()
 productRoute.post("/create_category", authMiddleware, chekingRoles(["admin"]), upload.single("Cetegory"), createCetegory)
 productRoute.get("/allCetegories", authMiddleware, chekingRoles(["users", "admin", "stuffs"]), fetchCetegories)
 
-productRoute.post("/create_product", upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "subImgs", maxCount: 6 }]), create_product)
-productRoute.post("/update_product/:slug", upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "subImgs", maxCount: 6 }]), update_product)
-productRoute.get("/allProduct", fetch_allProduct)
-productRoute.delete("/deleteProduct/:productID", delete_product)
+productRoute.post("/create_product", authMiddleware, chekingRoles(["admin", "stuffs"]), upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "subImgs", maxCount: 6 }]), create_product)
+productRoute.post("/update_product/:slug", authMiddleware, chekingRoles(["admin", "stuffs"]), upload.fields([{ name: "mainImg", maxCount: 1 }, { name: "subImgs", maxCount: 6 }]), update_product)
+productRoute.get("/allProduct", authMiddleware, chekingRoles(["users", "admin", "stuffs"]), fetch_allProduct)
+productRoute.delete("/deleteProduct/:productID", authMiddleware, chekingRoles(["admin"]), delete_product)
 
 module.exports = productRoute
