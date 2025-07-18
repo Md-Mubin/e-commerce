@@ -91,7 +91,7 @@ const create_product = async (req, res) => {
 const update_product = async (req, res) => {
 
     try {
-        const { title, description, price, stock, veriants } = req.body
+        const { title, description, price, stock, veriants, status } = req.body
         const { slug } = req.params
 
         // check for product exists
@@ -104,6 +104,10 @@ const update_product = async (req, res) => {
         if (price) existProduct.price = price
         if (stock) existProduct.stock = stock
         if (veriants && veriants.length > 0) existProduct.veriants = veriants
+
+        if(status && ["active", "pending", "reject"].includes(status.toLowerCase()) && req?.user?.role === "admin"){
+            existProduct.status = status
+        }
 
         // for update mainImage image
         let productMainImg
