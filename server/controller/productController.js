@@ -183,4 +183,21 @@ const fetch_allProduct = async (req, res) => {
     }
 }
 
-module.exports = { create_product, update_product, fetch_allProduct }
+// ================== delete products
+const delete_product = async (req, res) => {
+    
+    try {
+        const { productID } = req.params
+        if (!productID) return res.status(400).send({ err: "Something Went Wrong. Please Try Again!" })
+
+        const deleteProduct = await productSchema.findByIdAndDelete(productID)
+        if (!deleteProduct) return res.status(400).send({ err: "Something Went Wrong. Please Try Again!" })
+
+        res.status(200).send({ msg: "Product Deleted Successfull" })
+    } catch (error) {
+        res.status(500).send({ msg: "Server Error" })
+    }
+}
+
+
+module.exports = { create_product, update_product, fetch_allProduct, delete_product }
