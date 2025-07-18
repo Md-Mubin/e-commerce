@@ -2,6 +2,8 @@ const slugGenerator = require("../helpers/slugGenerator")
 const productSchema = require("../models/productSchema")
 const cloudinary = require("../helpers/cloudinary")
 const fs = require("fs")
+const searchFilter = require("../helpers/searchFIlter")
+const cetegorySchema = require("../models/cetegorySchema")
 
 // ================== create product
 const create_product = async (req, res) => {
@@ -138,34 +140,45 @@ const update_product = async (req, res) => {
 
 // ================== fetching all product
 const fetch_allProduct = async (req, res) => {
-    const search = req.query.search || ""
-    const cetegoryName = req.query.cetegory || ""
-    const page = parseInt(req.query.page) || 1
-    const limit = parseInt(req.query.limit) || 10
+    try {
+        const search = req.query.search || ""
+        const cetegoryName = req.query.cetegory || ""
+        const page = parseInt(req.query.page) || 1
+        const limit = parseInt(req.query.limit) || 10
 
-    const totalProduct = await productSchema.countDocuments()
-    const totalPage = Math.ceil(totalProduct / limit)
-    const skip = (page - 1) * limit
+        const totalProduct = await productSchema.countDocuments()
+        const totalPage = Math.ceil(totalProduct / limit)
+        const skip = (page - 1) * limit
 
-    const query = {}
+        const query = {}
 
+        if (search) {
+            query.title = { $regex: searchFilter(search), $options: "i" }
+        }
+        if (cetegoryName) {
+            const cetegoryData = await cetegorySchema.findOne({ cetegoryName: { $regex: searchFilter(cetegoryName), $options: "i" } })
+            if (cetegoryData) query.cetegory = cetegoryData._id
+        }
 
-    const products = await productSchema.find().skip(skip).limit(limit)
+        const products = await productSchema.find(query).skip(skip).limit(limit)
 
-    const hasPrevPage = page > 1
-    const hasNextPage = page < totalPage
+        const hasPrevPage = page > 1
+        const hasNextPage = page < totalPage
 
-    res.send({
-        products,
-        totalProduct,
-        limit,
-        page,
-        totalPage,
-        hasPrevPage,
-        hasNextPage,
-        prevPage: hasPrevPage ? page - 1 : null,
-        nextPage: hasNextPage ? page + 1 : null,
-    })
+        res.send({
+            products,
+            totalProduct,
+            limit,
+            page,
+            totalPage,
+            hasPrevPage,
+            hasNextPage,
+            prevPage: hasPrevPage ? page - 1 : null,
+            nextPage: hasNextPage ? page + 1 : null,
+        })
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
 }
 
 module.exports = { create_product, update_product, fetch_allProduct }
