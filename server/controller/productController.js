@@ -1,5 +1,7 @@
 const slugGenerator = require("../helpers/slugGenerator")
 const productSchema = require("../models/productSchema")
+const cloudinary = require("../helpers/cloudinary")
+const fs = require("fs")
 
 // ================== create product
 const create_product = async (req, res) => {
@@ -25,8 +27,8 @@ const create_product = async (req, res) => {
 
         // upload main image
         let productMainImg
-        if (req?.file?.mainImg.length > 0) {
-            for (item of req?.file?.mainImg) {
+        if (req?.files?.mainImg.length > 0) {
+            for (item of req?.files?.mainImg) {
                 const result = cloudinary.uploader.upload(item?.path, {
                     folder: "product"
                 })
@@ -37,8 +39,8 @@ const create_product = async (req, res) => {
 
         // upload sub images
         let productSubImages = []
-        if (req?.file?.subImgs.length > 0) {
-            for (item of req?.file?.subImgs) {
+        if (req?.files?.subImgs.length > 0) {
+            for (item of req?.files?.subImgs) {
                 const result = cloudinary.uploader.upload(item?.path, {
                     folder: "product"
                 })
@@ -102,9 +104,9 @@ const update_product = async (req, res) => {
         if (veriants && veriants.length > 0) existProduct.veriants = veriants
 
         // for update mainImage image
-        if (req?.file?.mainImg.length > 0) {
-            let productMainImg
-            for (item of req?.file?.mainImg) {
+        let productMainImg
+        if (req?.files?.mainImg.length > 0) {
+            for (item of req?.files?.mainImg) {
                 const result = cloudinary.uploader.upload(item?.path, {
                     folder: "product"
                 })
@@ -115,8 +117,8 @@ const update_product = async (req, res) => {
         }
 
         // for update sub images
+        let productSubImages = []
         if (req?.files?.subImgs.length > 0) {
-            let productSubImages = []
             for (item of req?.files?.subImgs) {
                 const result = cloudinary.uploader.upload(item?.path, {
                     folder: "product"
