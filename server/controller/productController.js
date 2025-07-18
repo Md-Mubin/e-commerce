@@ -21,7 +21,7 @@ const create_product = async (req, res) => {
         if (!req?.files?.mainImg) return res.status(400).send({ err: "Product Main Image Required" })
 
         // generate slugs
-        const generatedSlug = slugGenerator(title)
+        const generatedSlug = await slugGenerator(title)
 
         // check if the product exists
         const existsProduct = await productSchema.findOne({ slug: generatedSlug })
@@ -162,7 +162,7 @@ const fetch_allProduct = async (req, res) => {
         }
 
         // filtering product search
-        const products = await productSchema.find(query).skip(skip).limit(limit)
+        const products = await productSchema.find(query).skip(skip).limit(limit).populate("cetegory")
 
         const hasPrevPage = page > 1
         const hasNextPage = page < totalPage
