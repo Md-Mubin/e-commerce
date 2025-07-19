@@ -8,7 +8,7 @@ const authRoute = express.Router()
 authRoute.post("/register", register)
 authRoute.post("/login", login)
 authRoute.post("/emailVerify", emailVarify)
-authRoute.post("/resetPass", resetPass)
+authRoute.post("/resetPass/:randomString", resetPass)
 authRoute.post("/forgetPass", forgetPass)
 authRoute.post("/update", authMiddleware, chekingRoles(["users", "admin", "stuffs"]), upload.single("avatar"), update)
 
