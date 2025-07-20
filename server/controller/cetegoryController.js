@@ -43,7 +43,7 @@ const fetchCetegories = async (req, res) => {
     try {
         const allCetegories = await cetegorySchema.find()
         if (!allCetegories) return res.status(400).send({ err: "No Cetegories Found" })
-        re.status(200).send(allCetegories)
+        res.status(200).send(allCetegories)
     } catch (error) {
         return res.status(500).send({ err: "Server Error" })
     }

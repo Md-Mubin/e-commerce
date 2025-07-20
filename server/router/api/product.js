@@ -9,7 +9,7 @@ const productRoute = express.Router()
 // ============= cetegory part 
 productRoute.post("/create_category",
     authMiddleware,
-    chekingRoles(["admin"]),
+    chekingRoles(["admin", "stuffs"]),
     upload.single("Cetegory"),
     createCetegory)
 

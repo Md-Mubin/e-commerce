@@ -181,7 +181,10 @@ const resetPass = async (req, res) => {
         if (!newPass) return res.status(400).send({ err: "New Password Required" })
 
         const randomString = req.params.randomString
+        if (!randomString) return res.status(400).send({ err: "Something Went Wrong" })
+
         const email = req.query.email
+        if (!email) return res.status(400).send({ err: "Something Went Wrong" })
 
         // checking if the user exists
         const existUser = await userSchema.findOne({ email, resetPassID: randomString, resetPassID_expireAt: { $gt: Date.now() } })
@@ -219,7 +222,7 @@ const update = async (req, res) => {
         existUser.save()
         res.status(200).send(existUser)
     } catch (error) {
-        res.status(500).send("Server Error")
+        res.status(500).send({ err: "Server Error" })
     }
 }
 
