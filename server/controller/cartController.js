@@ -57,4 +57,30 @@ const update_cart = async (req, res) => {
     }
 }
 
-module.exports = { addTo_Cart, update_cart }
+const delete_cart = async (req, res) => {
+
+    try {
+        const { productID } = req.params
+    
+        if (!productID) res.status(400).send({ err: "Product not found" })
+    
+        let cart = await cartSchema.findOne({ userID: req?.user?.id })
+    
+        if (!cart) return res.status(400).send({ err: "Sorry, cart not found" })
+    
+        const initialLength = cart?.item.length
+    
+        cart?.item = cart?.item.filter(data => data?.itemID.toString() !== productID)
+    
+        if (cart?.item.length === initialLength) {
+            return res.status(400).send({ err: "Product Not Found" })
+        }
+    
+        await cart.save()
+        res.status(200).send({ msg: "Cart Successfully Deleted" })
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
+}
+
+module.exports = { addTo_Cart, update_cart, delete_cart }
