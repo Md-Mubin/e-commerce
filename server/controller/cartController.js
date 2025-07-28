@@ -1,6 +1,6 @@
 const cartSchema = require("../models/cartSchema")
 
-const create_cart = async (req, res) => {
+const addTo_Cart = async (req, res) => {
     
     try {
         const { productID, quantity } = req.body
@@ -36,4 +36,4 @@ const update_cart = (req, res) => {
 
 }
 
-module.exports = { create_cart, update_cart }
+module.exports = { addTo_Cart, update_cart }
