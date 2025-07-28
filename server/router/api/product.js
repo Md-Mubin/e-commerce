@@ -4,6 +4,7 @@ const authMiddleware = require("../../middlewares/authMiddleware")
 const chekingRoles = require("../../middlewares/cetegoryMiddleware")
 const upload = require("../../helpers/multer")
 const { create_product, fetch_allProduct, update_product, delete_product } = require("../../controller/productController")
+const { addTo_Cart, update_cart, delete_cart } = require("../../controller/cartController")
 const productRoute = express.Router()
 
 // ============= cetegory part 
@@ -40,5 +41,18 @@ productRoute.delete("/deleteProduct/:productID",
     authMiddleware,
     chekingRoles(["admin"]),
     delete_product)
+
+// ============= Cart part
+productRoute.post("/addToCart",
+    authMiddleware,
+    addTo_Cart)
+
+productRoute.post("/update_cart",
+    authMiddleware,
+    update_cart)
+
+productRoute.delete("/delete_cart",
+    authMiddleware,
+    delete_cart)
 
 module.exports = productRoute
