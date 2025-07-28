@@ -16,7 +16,7 @@ const addTo_Cart = async (req, res) => {
             })
         }
 
-        let newIndex = cart?.item.findIndex(data => data.itemID.toString() === productID)
+        let newIndex = cart?.item.findIndex(data => data?.itemID.toString() === productID)
 
         if (newIndex > -1) {
             cart?.item[newIndex].itemQuantity += quantity
