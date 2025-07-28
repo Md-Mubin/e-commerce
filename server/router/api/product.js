@@ -51,7 +51,7 @@ productRoute.post("/update_cart",
     authMiddleware,
     update_cart)
 
-productRoute.delete("/delete_cart",
+productRoute.delete("/delete_cart/:productID",
     authMiddleware,
     delete_cart)
 
