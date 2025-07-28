@@ -1,7 +1,7 @@
 const cartSchema = require("../models/cartSchema")
 
 const addTo_Cart = async (req, res) => {
-    
+
     try {
         const { productID, quantity } = req.body
 
@@ -23,17 +23,38 @@ const addTo_Cart = async (req, res) => {
         } else {
             cart?.item.push({ itemID: productID, itemQuantity: quantity })
         }
-        
+
         cart.save()
         res.status(200).send({ msg: "Product Added to Cart" })
-    
+
     } catch (error) {
-        res.status(500).send({ err : "Server Error" })
+        res.status(500).send({ err: "Server Error" })
     }
 }
 
-const update_cart = (req, res) => {
+const update_cart = async (req, res) => {
 
+    try {
+        const { productID, quantity } = req.user
+
+        if (!productID) res.status(400).send({ err: "Product not found" })
+
+        let cart = await cartSchema.findOne({ userID: req?.user?.id })
+
+        if (!cart) return res.status(400).send({ err: "Sorry, cart not found" })
+
+        let newIndex = cart?.item.findIndex(data => data?.itemID.toString() === productID)
+
+        if (newIndex === -1) return res.status(400).send({ err: "Product Not Found" })
+
+        cart?.item[newIndex].itemQuantity = quantity
+
+        cart.save()
+
+        res.status(200).send(cart)
+    } catch (error) {
+        res.status(500).send({ err: "Server Error" })
+    }
 }
 
 module.exports = { addTo_Cart, update_cart }
