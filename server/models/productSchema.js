@@ -1,15 +1,15 @@
 const mongoose = require("mongoose")
-const SCHEMA = mongoose.Schema
+const { Schema } = mongoose
 
-const productSchema = new SCHEMA({
+const productSchema = new Schema({
     title: {
         type: String,
         required: true
     },
 
-    slug:{
-        type : String,
-        required : true
+    slug: {
+        type: String,
+        required: true
     },
 
     description: {
@@ -39,7 +39,7 @@ const productSchema = new SCHEMA({
     ],
 
     cetegory: {
-        type: SCHEMA.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "categories"
     },
 

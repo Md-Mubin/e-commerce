@@ -1,15 +1,16 @@
 const mongoose = require("mongoose")
-const SCHEMA = mongoose.Schema
+const { Schema } = mongoose
 
-const cartSchema = new SCHEMA({
-    cartName: {
-        type: String,
+const cartSchema = new Schema({
+    userID: {
+        type: Schema.Types.ObjectId,
+        ref : "users",
         required: true
     },
     item: [
         {
             itemID: {
-                type: SCHEMA.Types.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: "products",
                 required: true
             },

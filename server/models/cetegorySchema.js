@@ -1,14 +1,14 @@
 const mongoose = require("mongoose")
-const SCHEMA = mongoose.Schema
+const { Schema } = mongoose
 
-const cetegorySchema = new SCHEMA({
+const cetegorySchema = new Schema({
     cetegoryName: {
         type: String,
         required: true
     },
-    cetegoryImage : {
-        type : String,
-        required : true
+    cetegoryImage: {
+        type: String,
+        required: true
     }
 },
     { timestamps: true }
