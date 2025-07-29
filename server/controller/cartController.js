@@ -24,7 +24,7 @@ const addTo_Cart = async (req, res) => {
             cart?.item.push({ itemID: productID, itemQuantity: quantity })
         }
 
-        cart.save()
+        await cart.save()
         res.status(200).send({ msg: "Product Added to Cart" })
 
     } catch (error) {
@@ -49,9 +49,9 @@ const update_cart = async (req, res) => {
 
         cart?.item[newIndex].itemQuantity = quantity
 
-        cart.save()
-
+        await cart.save()
         res.status(200).send(cart)
+    
     } catch (error) {
         res.status(500).send({ err: "Server Error" })
     }
@@ -78,6 +78,7 @@ const delete_cart = async (req, res) => {
     
         await cart.save()
         res.status(200).send({ msg: "Cart Successfully Deleted" })
+    
     } catch (error) {
         res.status(500).send({ err: "Server Error" })
     }
