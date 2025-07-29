@@ -16,12 +16,12 @@ const addTo_Cart = async (req, res) => {
             })
         }
 
-        let newIndex = cart?.item.findIndex(data => data?.itemID.toString() === productID)
+        let newIndex = cart.item.findIndex(data => data.itemID.toString() === productID)
 
         if (newIndex > -1) {
-            cart?.item[newIndex].itemQuantity += quantity
+            cart.item[newIndex].itemQuantity += quantity
         } else {
-            cart?.item.push({ itemID: productID, itemQuantity: quantity })
+            cart.item.push({ itemID: productID, itemQuantity: quantity })
         }
 
         await cart.save()
@@ -43,11 +43,11 @@ const update_cart = async (req, res) => {
 
         if (!cart) return res.status(400).send({ err: "Sorry, cart not found" })
 
-        let newIndex = cart?.item.findIndex(data => data?.itemID.toString() === productID)
+        let newIndex = cart.item.findIndex(data => data.itemID.toString() === productID)
 
         if (newIndex === -1) return res.status(400).send({ err: "Product Not Found" })
 
-        cart?.item[newIndex].itemQuantity = quantity
+        cart.item[newIndex].itemQuantity = quantity
 
         await cart.save()
         res.status(200).send(cart)
@@ -70,11 +70,9 @@ const delete_cart = async (req, res) => {
     
         const initialLength = cart?.item.length
     
-        cart?.item = cart?.item.filter(data => data?.itemID.toString() !== productID)
+        cart.item = cart.item.filter(data => data?.itemID.toString() !== productID)
     
-        if (cart?.item.length === initialLength) {
-            return res.status(400).send({ err: "Product Not Found" })
-        }
+        if (cart.item.length === initialLength) return res.status(400).send({ err: "Product Not Found" })
     
         await cart.save()
         res.status(200).send({ msg: "Cart Successfully Deleted" })
