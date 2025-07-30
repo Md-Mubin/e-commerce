@@ -25,7 +25,7 @@ const createCetegory = async (req, res) => {
 
         const result = await cloudinary.uploader.upload(req.file.path, { folder: "Cetegory" })
         fs.unlinkSync(req.file.path)
-
+ 
         const newCetegory = new cetegorySchema({
             cetegoryName,
             cetegoryImage: result.url
