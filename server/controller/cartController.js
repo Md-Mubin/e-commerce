@@ -1,5 +1,6 @@
 const cartSchema = require("../models/cartSchema")
 
+// ============== adding product into cart part
 const addTo_Cart = async (req, res) => {
 
     try {
@@ -32,6 +33,7 @@ const addTo_Cart = async (req, res) => {
     }
 }
 
+// ============== updating product from cart
 const update_cart = async (req, res) => {
 
     try {
@@ -57,6 +59,7 @@ const update_cart = async (req, res) => {
     }
 }
 
+// ============== deleting cart from cart list
 const delete_cart = async (req, res) => {
 
     try {
