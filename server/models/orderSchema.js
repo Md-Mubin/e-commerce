@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 
+// =========== order items schema 
 const orderItemSchema = Schema({
     quantity: {
         type: Number,
@@ -14,6 +15,8 @@ const orderItemSchema = Schema({
     }
 })
 
+
+//  =========== main order schema
 const orderSchema = new Schema({
     userID: {
         type: Schema.Types.ObjectId,
