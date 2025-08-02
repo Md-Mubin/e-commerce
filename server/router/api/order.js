@@ -3,6 +3,6 @@ const { addOrder } = require("../../controller/orderController")
 const authMiddleware = require("../../middlewares/authMiddleware")
 const orderRoute = express.Router()
 
-apiRoute.post("/addOrder", authMiddleware, addOrder)
+apiRoute.post("/addOrder", addOrder)
 
 module.exports = orderRoute

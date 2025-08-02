@@ -6,7 +6,7 @@ const addOrder = async (req, res) => {
     try {
         const { orderItems, shippinAddress, phone } = req.body
 
-        if (!orderItems || orderItems.length < 0) return res.status(400).send({ err: "Order Items Required" })
+        if (!orderItems || orderItems.length < 1) return res.status(400).send({ err: "Order Items Required" })
 
         if (!shippinAddress) return res.status(400).send({ err: "Order Address Required" })
         if (!phone) return res.status(400).send({ err: "Phone Number Required" })
@@ -20,7 +20,7 @@ const addOrder = async (req, res) => {
 
             let itemPrice = product.price
 
-            product.selectedVarients.forEach(veriants => {
+            item.selectedVarients.forEach(veriants => {
                 const productVeriant = product.veriants.find(ver => ver.name === veriants.name)
 
                 if (productVeriant) {
