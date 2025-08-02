@@ -1,6 +1,7 @@
 const orderSchema = require("../models/orderSchema")
 const productSchema = require("../models/productSchema")
 
+// ================= adding order 
 const addOrder = async (req, res) => {
 
     try {

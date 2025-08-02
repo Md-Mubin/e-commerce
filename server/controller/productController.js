@@ -15,7 +15,7 @@ const create_product = async (req, res) => {
         if (!description) return res.status(400).send({ err: "Product Description Required" })
         if (!price) return res.status(400).send({ err: "Product Price Required" })
         if (!stock) return res.status(400).send({ err: "Product Stock Required" })
-        // if (veriants.length < 1) return res.status(400).send({ err: "Product Veriants Required" })
+        if (veriants.length < 1) return res.status(400).send({ err: "Product Veriants Required" })
 
         // for chekcing image
         if (!req?.files?.mainImg) return res.status(400).send({ err: "Product Main Image Required" })
