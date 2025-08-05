@@ -13,7 +13,6 @@ const addOrder = async (req, res) => {
         if (!phone) return res.status(400).send({ err: "Phone Number Required" })
 
         let totalAmount = 0
-        const populatedItem = []
 
         for (let item of orderItems) {
             const product = await productSchema.findById(item.productID)
@@ -37,13 +36,6 @@ const addOrder = async (req, res) => {
             })
 
             totalAmount += itemPrice * item.quantity
-
-            populatedItem.push({
-                product: item.product,
-                quantity: item.quantity,
-                selectedVarients: item.selectedVarients,
-                price: itemPrice
-            })
         }
 
         const newOrder = new orderSchema({

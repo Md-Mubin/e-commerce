@@ -7,19 +7,21 @@ import AllProducts from './pages/AllProducts'
 import OrderLists from './pages/OrderLists'
 import AllCustomers from './pages/AllCustomers'
 import ReviewsLists from './pages/ReviewsLists'
+import CreateProduct from './pages/CreateProduct'
 
 function App() {
-
+// https://codervent.com/dashtrans/demo/vertical/ecommerce-add-new-products.html
   return (
     <>
       <BrowserRouter>
         <Routes>
           <Route>
-            <Route path='/admin' element={<Login />} />
+            <Route path='/login' element={<Login />} />
 
-            <Route path='/dashboard' element={<LayoutOne />}>
+            <Route path='/' element={<LayoutOne />}>
               <Route index element={<Dashboard />} />
               <Route path='/dashboard/products' element={<AllProducts />} />
+              <Route path='/dashboard/create_products' element={<CreateProduct />} />
               <Route path='/dashboard/orders' element={<OrderLists />} />
               <Route path='/dashboard/customers' element={<AllCustomers />} />
               <Route path='/dashboard/reviews' element={<ReviewsLists />} />
