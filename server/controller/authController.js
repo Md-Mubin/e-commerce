@@ -63,23 +63,26 @@ const login = async (req, res) => {
         const { email, pass } = req.body
 
         const errors = {}
+        let existUser;
         if (!email) errors.emailError = "Email Required"
         if (email && !emailValid(email)) errors.emailError = "Email is not Valid"
 
         // checking if user with email already exists
-        const existUser = await userSchema.findOne({ email })
         if (email && emailValid(email)) {
+            existUser = await userSchema.findOne({ email })
             if (!existUser) errors.emailError = "User is not Exists"
         }
 
-        if (!existUser?.isVerified) errors.emailError = "Something Went Wrong"
+        if (existUser && !existUser.isVerified) errors.emailError = "Something Went Wrong"
 
         if (!pass) errors.passError = "Password Required"
         if (pass && passValid(pass)) errors.passError = passValid(pass)
 
         // to check password
-        const passCheck = await existUser.isPassValid(pass)
-        if (pass && !passValid(pass) && !passCheck) errors.passError = "Something Went Wrong"
+        if (existUser && existUser.isVerified) {
+            const passCheck = await existUser.isPassValid(pass)
+            if (pass && !passValid(pass) && !passCheck) errors.passError = "Something Went Wrong"
+        }
 
         if (Object.keys(errors).length > 0) {
             return res.status(400).send({ errors })
@@ -90,6 +93,7 @@ const login = async (req, res) => {
 
         delete loggedUser.pass
         delete loggedUser.OTP
+        delete loggedUser.OTP_failedAttempt
         delete loggedUser.OTP_expireTime
 
         // create access token
