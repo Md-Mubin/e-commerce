@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
 import { adminAuth } from '../Service/api'
+import { useDispatch, useSelector } from "react-redux"
+import { loggedUserInfo } from '../Store/Slices/authSlice'
+import { Navigate } from 'react-router'
 
 const Login = () => {
+
+  const dispatch = useDispatch()
 
   const [form, setForm] = useState({
     email: "",
@@ -13,17 +18,24 @@ const Login = () => {
 
     try {
       const res = await adminAuth.login(form)
-      console.log(res)
+      if (res?.access_token) {
+        localStorage.setItem("loggedUser", JSON.stringify(res?.loggedUser))
+        sessionStorage.setItem("token", res?.access_token)
+      }
+      dispatch(loggedUserInfo(res.loggedUser))
     } catch (error) {
       console.log(error)
     }
   }
 
+  const { user } = useSelector((state) => state.userData)
+  if (user) return <Navigate to={"/"} />
+
   return (
     <>
       <section className='w-full h-[100dvh] bg-[url("/images/admin_bg.png")] pt-[280px]'>
         <div className="container">
-          
+
           <form onSubmit={handleFormSubmit} className='w-[600px] m-auto p-6 border border-[#ffffff40] rounded-lg bg-[#00000040]'>
             <h2 className='text-center text-4xl text-white mb-10'>Admin</h2>
             <ul>
