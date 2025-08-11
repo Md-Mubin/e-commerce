@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@utility container {
+    padding: 0 20px;
+    margin: 0 auto;
+
+    @variant lg {
+        width: 1320px;
+    }
+}

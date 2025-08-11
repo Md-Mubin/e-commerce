@@ -67,12 +67,12 @@ const login = async (req, res) => {
         if (email && !emailValid(email)) errors.emailError = "Email is not Valid"
 
         // checking if user with email already exists
+        const existUser = await userSchema.findOne({ email })
         if (email && emailValid(email)) {
-            const existUser = await userSchema.findOne({ email })
             if (!existUser) errors.emailError = "User is not Exists"
         }
 
-        if (!existUser.isVerified) errors.emailError = "Something Went Wrong"
+        if (!existUser?.isVerified) errors.emailError = "Something Went Wrong"
 
         if (!pass) errors.passError = "Password Required"
         if (pass && passValid(pass)) errors.passError = passValid(pass)
@@ -103,7 +103,7 @@ const login = async (req, res) => {
 
         if (!access_token) return res.status(400).send({ err: "Something Went Wrong" })
 
-        res.status(400).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}`, loggedUser, access_token })
+        res.status(200).cookie(access_token).send({ msg: `Welcome ${loggedUser.name}`, loggedUser, access_token })
     } catch (error) {
         res.status(500).send({ err: "Server Error" })
     }
