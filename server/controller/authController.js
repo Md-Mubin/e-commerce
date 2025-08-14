@@ -152,6 +152,7 @@ const forgetPass = async (req, res) => {
 
         // create new string for reset pass link
         const createdString = generatedRandomString(30)
+        if (!createdString) return res.status(400).send({ err: "Something Went Wrong" })
 
         existUser.resetPassID = createdString
         existUser.resetPassID_expireAt = new Date(Date.now() + 5 * 60 * 1000)
