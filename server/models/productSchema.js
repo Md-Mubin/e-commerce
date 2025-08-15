@@ -51,27 +51,23 @@ const productSchema = new Schema({
 
     veriants: [
         {
-            name: {
+            colorName: {
                 type: String,
-                enum: ["color", "size"]
+                required: true,
+                trim: true
             },
 
-            options: [
+            sizes: [
                 {
-                    colorName: {
+                    sizeName: {
                         type: String,
-                        required: true
+                        enum: ["s", "m", "l", "xl", "2xl"],
+                        required: true,
                     },
-
-                    allSizes: {
-                        type: String,
-                        required: true
-                    },
-
                     additionalPrice: {
                         type: Number,
                         default: 0
-                    },
+                    }
                 }
             ]
         }

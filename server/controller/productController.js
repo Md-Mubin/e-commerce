@@ -15,7 +15,7 @@ const create_product = async (req, res) => {
         if (!description) return res.status(400).send({ err: "Product Description Required" })
         if (!price) return res.status(400).send({ err: "Product Price Required" })
         if (!stock) return res.status(400).send({ err: "Product Stock Required" })
-        if (veriants.length < 1) return res.status(400).send({ err: "Product Veriants Required" })
+        if (!Array.isArray(veriants) || veriants.length < 0) return res.status(400).send({ err: "Product Veriant Required" })
 
         // for chekcing image
         if (!req?.files?.mainImg) return res.status(400).send({ err: "Product Main Image Required" })
@@ -55,27 +55,15 @@ const create_product = async (req, res) => {
         if (!cetegory) return res.status(400).send({ err: "Product Cetegory Required" })
 
         // for veriants conditions
-        veriants.forEach((items) => {
-            if (!["color", "size"].includes(items.name)) {
-                return res.status(400).send({ err: "Invalid Veriants Options" })
-            }
+        for (const items of veriants) {
+            if (!items.colorName || typeof items.colorName !== "string") return res.status(400).send({ err: "Must Have Valid Color Name" })
+            if (!Array.isArray(items.sizes) || items.sizes.length < 0) return res.status(400).send({ err: "Must Have At Least 1 Size Name" })
 
-            if (items.name === "color") {
-                items.options.forEach(colorOption => {
-                    if (!colorOption.hasOwnProperty("colorName")) {
-                        return res.status(400).send({ err: "Veriant's Color Name is Required" })
-                    }
-                })
+            for (const sizeItems of veriants.sizes) {
+                if(!sizeItems.sizeName.includes(["s", "m", "l", "xl", "2xl"])) return res.status(400).send({ err: "Must Have Valid Size Name" })
+                if(!sizeItems.additionalPrice < 0 || typeof sizeItems.additionalPrice !== "number") return res.status(400).send({ err: "Must Have Valid Additional Price" })
             }
-
-            if (items.name === "size") {
-                items?.options.forEach(sizeOption => {
-                    if (!sizeOption.hasOwnProperty("allSizes")) {
-                        return res.status(400).send({ err: "Veriant's Size is Required" })
-                    }
-                })
-            }
-        })
+        }
 
         const newProduct = new productSchema({
             title, slug: generatedSlug, description, price, stock, mainImg: productMainImg, subImgs: productSubImages, cetegory, veriants
