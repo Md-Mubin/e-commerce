@@ -1,21 +1,6 @@
 const mongoose = require("mongoose")
 const { Schema } = mongoose
 
-// =========== order items schema 
-const orderItemSchema = Schema({
-    quantity: {
-        type: Number,
-        required: true
-    },
-
-    product: {
-        type: Schema.Types.ObjectId,
-        ref: "products",
-        required: true
-    }
-})
-
-
 //  =========== main order schema
 const orderSchema = new Schema({
     userID: {
@@ -24,7 +9,20 @@ const orderSchema = new Schema({
         required: true
     },
 
-    orderItems: [orderItemSchema],
+    orderItems: [
+        {
+            quantity: {
+                type: Number,
+                required: true
+            },
+
+            product: {
+                type: Schema.Types.ObjectId,
+                ref: "products",
+                required: true
+            }
+        }
+    ],
 
     shippingAddress: {
         type: String,

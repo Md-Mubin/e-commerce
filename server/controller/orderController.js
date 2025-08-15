@@ -20,7 +20,7 @@ const addOrder = async (req, res) => {
 
             let itemPrice = product.price
 
-            item.selectedVarients.forEach(veriants => {
+            item.forEach(veriants => {
                 const productVeriant = product.veriants.find(ver => ver.name === veriants.name)
 
                 if (productVeriant) {
@@ -42,6 +42,7 @@ const addOrder = async (req, res) => {
             orderItems,
             userID: req.user.id,
             shippinAddress,
+            phone,
             totalPrice: totalAmount
         })
 
