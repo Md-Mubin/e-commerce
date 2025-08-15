@@ -4,6 +4,7 @@ const cloudinary = require("../helpers/cloudinary")
 const fs = require("fs")
 const searchFilter = require("../helpers/searchFIlter")
 const cetegorySchema = require("../models/cetegorySchema")
+const generateSKU = require("../helpers/generateSKU")
 
 // ================== create product
 const create_product = async (req, res) => {
@@ -62,6 +63,7 @@ const create_product = async (req, res) => {
             for (const sizeItems of veriants.sizes) {
                 if (!["s", "m", "l", "xl", "2xl"].includes(sizeItems.sizeName)) return res.status(400).send({ err: "Must Have Valid Size Name" })
                 if (sizeItems.additionalPrice < 0 || typeof sizeItems.additionalPrice !== "number") return res.status(400).send({ err: "Must Have Valid Additional Price" })
+                sizeItems.SKU = generateSKU(title, items.colorName, sizeItems.sizeName)
             }
         }
 

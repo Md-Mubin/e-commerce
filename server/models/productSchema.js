@@ -67,6 +67,10 @@ const productSchema = new Schema({
                     additionalPrice: {
                         type: Number,
                         default: 0
+                    },
+                    SKU: {
+                        type: String,
+                        required: true
                     }
                 }
             ]

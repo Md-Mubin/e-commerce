@@ -3,6 +3,7 @@ const { Schema } = mongoose
 
 //  =========== main order schema
 const orderSchema = new Schema({
+
     userID: {
         type: Schema.Types.ObjectId,
         ref: "users",
@@ -13,6 +14,11 @@ const orderSchema = new Schema({
         {
             quantity: {
                 type: Number,
+                required: true
+            },
+
+            SKU: {
+                type: String,
                 required: true
             },
 
