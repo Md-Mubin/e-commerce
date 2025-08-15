@@ -61,7 +61,7 @@ const create_product = async (req, res) => {
 
             for (const sizeItems of veriants.sizes) {
                 if (!["s", "m", "l", "xl", "2xl"].includes(sizeItems.sizeName)) return res.status(400).send({ err: "Must Have Valid Size Name" })
-                if (!sizeItems.additionalPrice < 0 || typeof sizeItems.additionalPrice !== "number") return res.status(400).send({ err: "Must Have Valid Additional Price" })
+                if (sizeItems.additionalPrice < 0 || typeof sizeItems.additionalPrice !== "number") return res.status(400).send({ err: "Must Have Valid Additional Price" })
             }
         }
 
