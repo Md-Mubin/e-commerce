@@ -60,8 +60,8 @@ const create_product = async (req, res) => {
             if (!Array.isArray(items.sizes) || items.sizes.length < 0) return res.status(400).send({ err: "Must Have At Least 1 Size Name" })
 
             for (const sizeItems of veriants.sizes) {
-                if(!sizeItems.sizeName.includes(["s", "m", "l", "xl", "2xl"])) return res.status(400).send({ err: "Must Have Valid Size Name" })
-                if(!sizeItems.additionalPrice < 0 || typeof sizeItems.additionalPrice !== "number") return res.status(400).send({ err: "Must Have Valid Additional Price" })
+                if (!["s", "m", "l", "xl", "2xl"].includes(sizeItems.sizeName)) return res.status(400).send({ err: "Must Have Valid Size Name" })
+                if (!sizeItems.additionalPrice < 0 || typeof sizeItems.additionalPrice !== "number") return res.status(400).send({ err: "Must Have Valid Additional Price" })
             }
         }
 
