@@ -9,10 +9,14 @@ const addTo_Cart = async (req, res) => {
 
         if (!productID) return res.status(400).send({ err: "Cart didn't added. Try Again" })
         if (!SKU) return res.status(400).send({ err: "Product variant (SKU) required" })
+        if (isNaN(quantity) || quantity < 1) return res.status(400).send({ err: "Invalid Quantity" })
+
+        quantity = Number(quantity)
 
         const product = await productSchema.findById(productID)
         if (!product) return res.status(400).send({ err: "Product not found" })
 
+        let foundProduct;
         for (let veriant of product.veriants) {
             if (!veriant.colorName || typeof veriant.colorName !== "string") return res.status(400).send({ err: "Must Have Valid Color Name" })
             if (!Array.isArray(veriant.sizes) || veriant.sizes.length < 0) return res.status(400).send({ err: "Must Have At Least 1 Size Name" })
@@ -20,6 +24,7 @@ const addTo_Cart = async (req, res) => {
             for (let size of veriant.sizes) {
                 if (!["s", "m", "l", "xl", "2xl"].includes(size.sizeName)) return res.status(400).send({ err: "Must Have Valid Size Name" })
                 if (size.SKU !== SKU) return res.status(400).send({ err: "Something Went Wrong" })
+                foundProduct = size
             }
         }
 
@@ -37,7 +42,7 @@ const addTo_Cart = async (req, res) => {
         if (newIndex > -1) {
             cart.item[newIndex].itemQuantity += quantity
         } else {
-            cart.item.push({ itemID: productID, SKU: SKU, itemQuantity: quantity })
+            cart.item.push({ itemID: productID, SKU: foundProduct.SKU, itemQuantity: quantity })
         }
 
         await cart.save()
