@@ -10,6 +10,6 @@ app.use(express.json())
 app.use(cors())
 app.use(router)
 
-db()
+db() 
 
 app.listen(8000, ()=>console.log("Server Connected"))
