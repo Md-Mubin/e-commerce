@@ -71,15 +71,15 @@ const userSchema = new Schema({
 
 // creating hash password and save it in schema
 userSchema.pre("save", async function (next) {
-    if (!this.isModified("pass")) return next()
+    if (!this.isModified("pass")) return next();
 
-    this.pass = await bcrypt.hash(this.pass, 10)
-    next()
+    this.pass = await bcrypt.hash(this.pass, 10);
+    next();
 })
 
 // check if the req password = saved hash password in the database
 userSchema.methods.isPassValid = async function (userPass) {
-    return await bcrypt.compare(userPass, this.pass)
+    return await bcrypt.compare(userPass, this.pass);
 }
 
-module.exports = mongoose.model("users", userSchema)
+module.exports = mongoose.model("users", userSchema);
